@@ -12,10 +12,10 @@ import (
 const port = ":8080"
 
 func main() {
+
 	deploymentChanges := make(chan *v1.Deployment)
-
-
 	srv := server.Create()
+
 	deploymentsHub := srv.DeploymentsHub()
 	go func() {
 		for message := range deploymentChanges {
@@ -24,7 +24,8 @@ func main() {
 		}
 	}()
 
-	go deployment.StartWatcher(deploymentChanges)
+	deploymentsClient := deployment.NewClient()
+	go deploymentsClient.StartWatcher(deploymentChanges)
 	go deploymentsHub.Run()
 
 	fmt.Println("Starting API on port", port)

@@ -5,12 +5,17 @@ import (
 	"k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
+	v12 "k8s.io/client-go/kubernetes/typed/apps/v1"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
 const kubeconfig = "/home/clanderas/.kube/config"
 
-func StartWatcher(changes chan<- *v1.Deployment ) {
+type deploymentClient struct {
+	deployments v12.DeploymentInterface
+}
+
+func NewClient() *deploymentClient {
 	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 	if(err != nil) {
 		panic(err)
@@ -20,10 +25,21 @@ func StartWatcher(changes chan<- *v1.Deployment ) {
 	if err != nil {
 		panic(err)
 	}
-	deploymentClient := clientset.AppsV1().Deployments("default")
+	return &deploymentClient{
+	 deployments: clientset.AppsV1().Deployments("default"),
+	}
+}
+func (d *deploymentClient) GetDeployments() *v1.DeploymentList {
+	deployments, err := d.deployments.List(metav1.ListOptions{})
+	if err != nil {
+		panic(err)
+	}
 
+	return deployments
+}
+func (d *deploymentClient) StartWatcher(changes chan<- *v1.Deployment ) {
 
-	watcher, err := deploymentClient.Watch(metav1.ListOptions{Watch:true})
+	watcher, err := d.deployments.Watch(metav1.ListOptions{Watch:true})
 	if err != nil {
 		panic(err)
 	}

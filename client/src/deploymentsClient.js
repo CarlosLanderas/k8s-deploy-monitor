@@ -1,10 +1,14 @@
 
-export function deploymentsClient(onMessage) {
+function deploymentsClient() {
     
     var ws = new WebSocket("ws://localhost:8080/ws");
-    ws.onmessage = (event) => {
-        onMessage(JSON.parse(event.data));
+    ws.onmessage = (event) => {        
+        this.onmessage(JSON.parse(event.data))       
     }
 }
+
+deploymentsClient.prototype.onMessage  = function(onmessage) {
+    this.onmessage = onmessage;
+};
 
 export default deploymentsClient;
