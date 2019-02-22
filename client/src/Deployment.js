@@ -1,17 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import  deploymentsClient from "./deploymentsClient";
-
+import k8sImage from "./k8s.png";
 
 const sortDeployments = (a, b) =>
   (a.metadata.name > b.metadata.name) ? 1 : ((b.metadata.name > a.metadata.name) ? -1 : 0)
 
 const Deployments = () => {
-  console.log("Executing init");
-  
+
   const [deploymentsState, setDeployments] = useState([]);
   const refState = useRef();
-  
-  console.log(deploymentsState);
 
   const onDeploymentChanged = deployment => {
     
@@ -35,7 +32,7 @@ const Deployments = () => {
 
       var response = await fetch("/deployments");
       var data = await response.json();
-      deploymentsClient(onDeploymentChanged)
+      deploymentsClient(onDeploymentChanged);
       setDeployments(data.items);
 
   },[]);
@@ -46,8 +43,11 @@ const Deployments = () => {
 
   return (
     <div>
-      {deploymentsState.map(deployment =>
-        <p>{deployment.metadata.name} has {deployment.spec.replicas} replicas</p>
+      {deploymentsState.map( (deployment,i) =>
+      <div key={i}>
+        <p>{deployment.metadata.name} has {deployment.spec.replicas} replicas</p>        
+        {Array.from(Array(deployment.spec.replicas)).map(i =>  <img height="40" width="40" src={k8sImage}/>)}               
+      </div>
       )}      
     </div>
   )
