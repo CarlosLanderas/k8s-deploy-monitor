@@ -1,7 +1,14 @@
-import React from 'react';
-import { deploymentsClient } from "./deploymentsClient";
+import React, {Fragment} from 'react';
+import Header from "./Header"
 import Deployment from "./Deployment";
+import "./index.css";
+import "./App.css";
 
 export default function App() {
-  return (<Deployment/>)
+  return (
+    <Fragment>
+     <Header/>
+    <Deployment/>
+    </Fragment>
+  )
 }
