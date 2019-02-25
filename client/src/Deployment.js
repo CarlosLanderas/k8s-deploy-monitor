@@ -15,33 +15,36 @@ const Deployments = () => {
 
   const onDeploymentChanged = deployment => {
     
-    let deploymentsState = refState.current;
-    let prevDeployment = deploymentsState.find(d => d.metadata.name === deployment.metadata.name)
+    let state = refState.current;
+    let prevDeployment = state.find(d => d.metadata.name === deployment.metadata.name)
     let deploys;
 
     if (prevDeployment) {
       prevDeployment.spec.replicas = deployment.spec.replicas;
-      deploys = [...deploymentsState.filter(d => d.metadata.name != deployment.metadata.name), Object.assign({},prevDeployment)]
+      prevDeployment.status.availableReplicas = deployment.status.availableReplicas;
+      deploys = [...state.filter(d => d.metadata.name != deployment.metadata.name), prevDeployment]
 
     } else {
-      deploys = [...deploymentsState, Object.assign({}, deployment)]
+      deploys = [...state, deployment]
     }
 
-    deploys.sort(sortDeployments);
+    deploys.sort(sortDeployments);    
     setDeployments(deploys);
+    
   };
 
   useEffect(async() => {     
 
       var response = await fetch("/deployments");
       var data = await response.json();
-      deploymentsClient(onDeploymentChanged);
+      var subscription = deploymentsClient(onDeploymentChanged);
       setDeployments(data.items);
+      return () => clearInterval(subscription);
 
   },[]);
   
   useEffect(()=>{
-    refState.current = deploymentsState;    
+    refState.current = deploymentsState;       
   });
 
   const renderAvailableReplicas = (deployment) => {
@@ -64,8 +67,7 @@ const Deployments = () => {
     <div className="deployments">
       {deploymentsState.map( (deployment,i) =>
       <div key={i}>
-        <p>{deployment.metadata.name} has {deployment.spec.replicas} replicas ( {deployment.status.availableReplicas} 
-         available and { deployment.spec.replicas - deployment.status.availableReplicas} not available) </p>        
+        <p>{deployment.metadata.name} has {deployment.spec.replicas} replicas ( {deployment.status.availableReplicas} available and { deployment.spec.replicas - deployment.status.availableReplicas} not available) </p>        
         {renderAvailableReplicas(deployment)}
         {renderUnavailableReplicas(deployment)}        
                       

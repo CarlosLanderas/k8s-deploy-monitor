@@ -12,5 +12,4 @@ function deploymentsClient(onMessage) {
     };
 }
 
-
 export default deploymentsClient;

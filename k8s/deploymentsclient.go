@@ -2,14 +2,15 @@ package deployment
 
 import (
 	"fmt"
-	"k8s.io/api/apps/v1"
+
+	v1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	v12 "k8s.io/client-go/kubernetes/typed/apps/v1"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-const kubeconfig = "/home/clanderas/.kube/config"
+const kubeconfig = "C:\\Users\\Carlos Landeras\\.kube\\config"
 
 type deploymentClient struct {
 	deployments v12.DeploymentInterface
@@ -17,7 +18,7 @@ type deploymentClient struct {
 
 func NewClient() *deploymentClient {
 	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
-	if(err != nil) {
+	if err != nil {
 		panic(err)
 	}
 	clientset, err := kubernetes.NewForConfig(config)
@@ -26,7 +27,7 @@ func NewClient() *deploymentClient {
 		panic(err)
 	}
 	return &deploymentClient{
-	 deployments: clientset.AppsV1().Deployments("default"),
+		deployments: clientset.AppsV1().Deployments("default"),
 	}
 }
 func (d *deploymentClient) GetDeployments() *v1.DeploymentList {
@@ -37,9 +38,9 @@ func (d *deploymentClient) GetDeployments() *v1.DeploymentList {
 
 	return deployments
 }
-func (d *deploymentClient) StartWatcher(changes chan<- *v1.Deployment ) {
+func (d *deploymentClient) StartWatcher(changes chan<- *v1.Deployment) {
 
-	watcher, err := d.deployments.Watch(metav1.ListOptions{Watch:true})
+	watcher, err := d.deployments.Watch(metav1.ListOptions{Watch: true})
 	if err != nil {
 		panic(err)
 	}
