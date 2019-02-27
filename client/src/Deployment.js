@@ -50,7 +50,7 @@ const Deployments = () => {
   const renderAvailableReplicas = (deployment) => {
       let available = [];
       for(var i = 0 ; i < (deployment.status.availableReplicas || 0); i++) {
-        available.push(<img key={i} height="40" width="40" src={k8sImage}/>);
+        available.push(<img key={i} className="k8simage" src={k8sImage}/>);
       }
       return available;
   };
@@ -58,7 +58,7 @@ const Deployments = () => {
   const renderUnavailableReplicas = (deployment) => {
     let unavailable = [];
     for(var i = 0; i < deployment.spec.replicas - (deployment.status.availableReplicas || 0); i++) {
-      unavailable.push(<img key={i} height="40" width="40" src={k8sRedImage}/>);
+      unavailable.push(<img key={i} className="k8simage" src={k8sRedImage}/>);
     }
     return unavailable;
   };
