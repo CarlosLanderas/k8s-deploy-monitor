@@ -1,20 +1,30 @@
 package main
 
 import (
-	"devops-spain/api"
-	"devops-spain/k8s"
+	server "devops-spain/api"
+	deployment "devops-spain/k8s"
 	"encoding/json"
 	"fmt"
-	"k8s.io/api/apps/v1"
 	"log"
 	"net/http"
+
+	ini "gopkg.in/ini.v1"
+	v1 "k8s.io/api/apps/v1"
 )
+
 const port = ":8080"
 
 func main() {
 
+	cfg, err := ini.Load("config.ini")
+	if err != nil {
+		log.Fatal("Could not read config.ini")
+	}
+
+	kubeconfig := cfg.Section("").Key("kubeconfig").Value()
+
 	deploymentChanges := make(chan *v1.Deployment)
-	srv := server.Create()
+	srv := server.Create(kubeconfig)
 
 	deploymentsHub := srv.DeploymentsHub()
 	go func() {
@@ -24,8 +34,14 @@ func main() {
 		}
 	}()
 
-	deploymentsClient := deployment.NewClient()
-	go deploymentsClient.StartWatcher(deploymentChanges)
+	deploymentsClient := deployment.NewClient(kubeconfig)
+
+	go func() {
+		for {
+			deploymentsClient.StartWatcher(deploymentChanges)
+		}
+	}()
+
 	go deploymentsHub.Run()
 
 	fmt.Println("Starting API on port", port)

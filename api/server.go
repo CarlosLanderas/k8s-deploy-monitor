@@ -3,12 +3,13 @@ package server
 import (
 	"devops-spain/api/routes"
 	"devops-spain/hub"
-	"github.com/gorilla/mux"
 	"net/http"
+
+	"github.com/gorilla/mux"
 )
 
 type Api struct {
-	router http.Handler
+	router         http.Handler
 	deploymentsHub *hub.Hub
 }
 
@@ -27,15 +28,15 @@ type Server interface {
 }
 
 // Create a new api Server
-func Create() Server {
+func Create(kubeconfig string) Server {
 
 	router := mux.NewRouter()
 
-	router.HandleFunc("/deployments", routes.GetDeployments)
+	router.HandleFunc("/deployments", routes.GetDeployments(kubeconfig))
 	router.Handle("/", http.FileServer(http.Dir("client/build")))
 
 	router.HandleFunc("/manifest.json", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r,"client/build/manifest.json")
+		http.ServeFile(w, r, "client/build/manifest.json")
 	})
 
 	router.PathPrefix("/static/").Handler(
@@ -49,7 +50,7 @@ func Create() Server {
 	})
 
 	return &Api{
-		router: router,
+		router:         router,
 		deploymentsHub: deploymentsHub,
 	}
 }

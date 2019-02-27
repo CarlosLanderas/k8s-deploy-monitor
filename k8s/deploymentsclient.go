@@ -10,13 +10,12 @@ import (
 	"k8s.io/client-go/tools/clientcmd"
 )
 
-const kubeconfig = "C:\\Users\\Carlos Landeras\\.kube\\config"
-
 type deploymentClient struct {
 	deployments v12.DeploymentInterface
+	kubeconfig  string
 }
 
-func NewClient() *deploymentClient {
+func NewClient(kubeconfig string) *deploymentClient {
 	config, err := clientcmd.BuildConfigFromFlags("", kubeconfig)
 	if err != nil {
 		panic(err)
@@ -40,10 +39,13 @@ func (d *deploymentClient) GetDeployments() *v1.DeploymentList {
 }
 func (d *deploymentClient) StartWatcher(changes chan<- *v1.Deployment) {
 
+	fmt.Println("Start deployments watcher")
 	watcher, err := d.deployments.Watch(metav1.ListOptions{Watch: true})
 	if err != nil {
 		panic(err)
 	}
+
+	defer watcher.Stop()
 
 	for event := range watcher.ResultChan() {
 		deploy, ok := event.Object.(*v1.Deployment)
@@ -53,4 +55,5 @@ func (d *deploymentClient) StartWatcher(changes chan<- *v1.Deployment) {
 			changes <- deploy
 		}
 	}
+
 }
