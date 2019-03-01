@@ -4,7 +4,7 @@ import k8sImage from "./k8s.png";
 import k8sRedImage from "./k8s-red.png";
 
 const sortDeployments = (a, b) =>
-  (a.metadata.name > b.metadata.name) ? 1 : ((b.metadata.name > a.metadata.name) ? -1 : 0)
+  (a.metadata.name > b.metadata.name) ? 1 : ((b.metadata.name > a.metadata.name) ? -1 : 0);
 
 const Deployments = () => {
 
@@ -14,13 +14,13 @@ const Deployments = () => {
   const onDeploymentChanged = deployment => {
     
     let state = refState.current;
-    let prevDeployment = state.find(d => d.metadata.name === deployment.metadata.name)
+    let prevDeployment = state.find(d => d.metadata.name === deployment.metadata.name);
     let deploys;
 
     if (prevDeployment) {
       prevDeployment.spec.replicas = deployment.spec.replicas;
       prevDeployment.status.availableReplicas = deployment.status.availableReplicas;
-      deploys = [...state.filter(d => d.metadata.name != deployment.metadata.name), prevDeployment]
+      deploys = [...state.filter(d => d.metadata.name != deployment.metadata.name), prevDeployment];
 
     } else {
       deploys = [...state, deployment]
