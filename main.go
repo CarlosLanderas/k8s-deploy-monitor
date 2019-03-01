@@ -15,8 +15,6 @@ const port = ":8080"
 
 func main() {
 
-
-
 	deploymentChanges := make(chan *v1.Deployment)
 	srv := server.Create()
 
