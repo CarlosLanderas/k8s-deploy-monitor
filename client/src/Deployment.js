@@ -9,8 +9,6 @@ const sortDeployments = (a, b) =>
 const Deployments = () => {
 
   const [deploymentsState, setDeployments] = useState([]);
-  const [availableReplicas, setAvailableReplicas] = useState([]);
-  const [unavailableReplicas, setUnavailableReplicas] = useState([]);
   const refState = useRef();
 
   const onDeploymentChanged = deployment => {
