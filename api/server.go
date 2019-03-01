@@ -28,11 +28,11 @@ type Server interface {
 }
 
 // Create a new api Server
-func Create(kubeconfig string) Server {
+func Create() Server {
 
 	router := mux.NewRouter()
 
-	router.HandleFunc("/deployments", routes.GetDeployments(kubeconfig))
+	router.HandleFunc("/deployments", routes.GetDeployments())
 	router.Handle("/", http.FileServer(http.Dir("client/build")))
 
 	router.HandleFunc("/manifest.json", func(w http.ResponseWriter, r *http.Request) {

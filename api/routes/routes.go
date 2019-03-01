@@ -6,9 +6,13 @@ import (
 	"net/http"
 )
 
-func GetDeployments(kubeconfig string) func(w http.ResponseWriter, r *http.Request) {
+func GetDeployments() func(w http.ResponseWriter, r *http.Request) {
 
-	var deploymentsClient = deployment.NewClient(kubeconfig)
+	 deploymentsClient, err := deployment.NewFromConfig()
+
+	 if err != nil {
+	 	panic(err)
+	 }
 
 	return func(w http.ResponseWriter, r *http.Request) {
 		deployments := deploymentsClient.GetDeployments()

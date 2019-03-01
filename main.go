@@ -1,30 +1,24 @@
 package main
 
 import (
-	server "k8s-deploy-monitor/api"
-	deployment "k8s-deploy-monitor/k8s"
 	"encoding/json"
 	"fmt"
+	"k8s-deploy-monitor/api"
+	"k8s-deploy-monitor/k8s"
 	"log"
 	"net/http"
 
-	ini "gopkg.in/ini.v1"
-	v1 "k8s.io/api/apps/v1"
+	"k8s.io/api/apps/v1"
 )
 
 const port = ":8080"
 
 func main() {
 
-	cfg, err := ini.Load("config.ini")
-	if err != nil {
-		log.Fatal("Could not read config.ini")
-	}
 
-	kubeconfig := cfg.Section("").Key("kubeconfig").Value()
 
 	deploymentChanges := make(chan *v1.Deployment)
-	srv := server.Create(kubeconfig)
+	srv := server.Create()
 
 	deploymentsHub := srv.DeploymentsHub()
 	go func() {
@@ -34,7 +28,11 @@ func main() {
 		}
 	}()
 
-	deploymentsClient := deployment.NewClient(kubeconfig)
+	deploymentsClient, err := deployment.NewFromConfig()
+
+	if err != nil {
+		panic(err)
+	}
 
 	go func() {
 		for {
