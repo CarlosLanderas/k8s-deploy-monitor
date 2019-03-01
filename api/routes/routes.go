@@ -1,7 +1,7 @@
 package routes
 
 import (
-	deployment "devops-spain/k8s"
+	deployment "k8s-deploy-monitor/k8s"
 	"encoding/json"
 	"net/http"
 )

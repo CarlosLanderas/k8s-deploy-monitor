@@ -1,8 +1,8 @@
 package server
 
 import (
-	"devops-spain/api/routes"
-	"devops-spain/hub"
+	"k8s-deploy-monitor/api/routes"
+	"k8s-deploy-monitor/hub"
 	"net/http"
 
 	"github.com/gorilla/mux"

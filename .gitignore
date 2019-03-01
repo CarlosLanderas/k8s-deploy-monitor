@@ -2,4 +2,4 @@ client/build/
 client/node_modules/
 .idea/
 .vscode/
-devops-spain*
+k8s-deploy-monitor

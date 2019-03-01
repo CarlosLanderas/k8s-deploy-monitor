@@ -1,8 +1,8 @@
 package main
 
 import (
-	server "devops-spain/api"
-	deployment "devops-spain/k8s"
+	server "k8s-deploy-monitor/api"
+	deployment "k8s-deploy-monitor/k8s"
 	"encoding/json"
 	"fmt"
 	"log"
