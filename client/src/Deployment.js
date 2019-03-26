@@ -35,10 +35,9 @@ const Deployments = () => {
 
       var response = await fetch("/deployments");
       var data = await response.json();
-      var subscription = deploymentsClient(onDeploymentChanged);
       setDeployments(data.items);
-      return () => clearInterval(subscription);
-
+      
+      deploymentsClient(onDeploymentChanged);      
   },[]);
   
   useEffect(()=>{
